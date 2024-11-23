@@ -16,7 +16,6 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
   spec = {
-    { "folke/todo-comments.nvim", event = "BufReadPre", opts = {} },
     { "lukas-reineke/indent-blankline.nvim", event = "BufReadPre", main = "ibl", opts = {} },
     { "kylechui/nvim-surround", keys = { "cs", "ds", "ys" }, opts = {} },
     { "windwp/nvim-autopairs", event = "InsertEnter", opts = { check_ts = true } },

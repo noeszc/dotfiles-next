@@ -1,3 +1,6 @@
+local map = vim.keymap.set
+local fn = vim.fn
+
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [D]iagnostic message" })
@@ -19,3 +22,10 @@ vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right win
 vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
 vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 
+-- moving lines up and down
+local Aj = fn.has("macunix") == 1 and "∆" or "<A-j>"
+local Ak = fn.has("macunix") == 1 and "˚" or "<A-k>"
+map("n", Aj, ":m .+1<CR>==", { silent = true })
+map("n", Ak, ":m .-2<CR>==", { silent = true })
+map("v", Aj, ":m '>+1<CR>gv=gv", { silent = true })
+map("v", Ak, ":m '<-2<CR>gv=gv", { silent = true })
