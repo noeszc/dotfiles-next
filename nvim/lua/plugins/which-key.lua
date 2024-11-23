@@ -1,30 +1,43 @@
 ---@type LazySpec
 return {
+  -- Which-key: Displays available keybindings in popup
+  -- Shows possible key combinations and their descriptions when you start typing a command
   "folke/which-key.nvim",
-  event = "VimEnter", -- Sets the loading event to 'VimEnter'
+  
+  event = "VimEnter", -- Load when Neovim starts up
+  
   opts = {
     icons = {
-      -- set icon mappings to true if you have a Nerd Font
+      -- Enable Nerd Font icons for key mappings if available
       mappings = vim.g.have_nerd_font,
-      -- If you are using a Nerd Font: set icons.keys to an empty table which will use the
-      -- default whick-key.nvim defined Nerd Font icons, otherwise define a string table
+      
+      -- Configure key icons based on Nerd Font availability:
+      -- If Nerd Font is present, use default Which-key icons
+      -- Otherwise, use text-based fallback icons
       keys = vim.g.have_nerd_font and {} or {
+        -- Navigation keys
         Up = "<Up> ",
         Down = "<Down> ",
         Left = "<Left> ",
         Right = "<Right> ",
-        C = "<C-…> ",
-        M = "<M-…> ",
-        D = "<D-…> ",
-        S = "<S-…> ",
-        CR = "<CR> ",
-        Esc = "<Esc> ",
+        
+        -- Modifier keys
+        C = "<C-…> ",    -- Control
+        M = "<M-…> ",    -- Meta/Alt
+        D = "<D-…> ",    -- Command (macOS)
+        S = "<S-…> ",    -- Shift
+        
+        -- Special keys
+        CR = "<CR> ",              -- Enter/Return
+        Esc = "<Esc> ",           -- Escape
         ScrollWheelDown = "<ScrollWheelDown> ",
         ScrollWheelUp = "<ScrollWheelUp> ",
-        NL = "<NL> ",
-        BS = "<BS> ",
+        NL = "<NL> ",             -- New Line
+        BS = "<BS> ",             -- Backspace
         Space = "<Space> ",
         Tab = "<Tab> ",
+        
+        -- Function keys
         F1 = "<F1>",
         F2 = "<F2>",
         F3 = "<F3>",
@@ -39,14 +52,22 @@ return {
         F12 = "<F12>",
       },
     },
+    
+    -- Define key groups and their descriptions
     spec = {
-      { "<leader>c", group = "[C]ode", mode = { "n", "x" } },
-      { "<leader>d", group = "[D]ocument" },
-      { "<leader>r", group = "[R]ename" },
-      { "<leader>s", group = "[S]earch" },
-      { "<leader>w", group = "[W]orkspace" },
-      { "<leader>m", group = "[M]eta", { "<leader>ml", "<cmd>Lazy<CR>", desc = "Open [L]azy" } },
+      -- Leader key groups for different functionality domains
+      { "<leader>c", group = "[C]ode", mode = { "n", "x" } },        -- Code actions
+      { "<leader>d", group = "[D]ocument" },                         -- Document operations
+      { "<leader>r", group = "[R]ename" },                          -- Renaming functionality
+      { "<leader>s", group = "[S]earch" },                          -- Search operations
+      { "<leader>w", group = "[W]orkspace" },                       -- Workspace actions
+      { "<leader>m", group = "[M]eta",                              -- Meta commands
+        { "<leader>ml", "<cmd>Lazy<CR>", desc = "Open [L]azy" }     -- Open Lazy plugin manager
+      },
+      -- Commented out for future use
       -- { "<leader>t", group = "[T]oggle" },
+      
+      -- Show buffer-local keymaps
       {
         "<leader>?",
         function()

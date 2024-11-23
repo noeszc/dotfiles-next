@@ -1,28 +1,66 @@
-return { -- Highlight, edit, and navigate code
+return {
+  -- Treesitter: Advanced syntax highlighting and code navigation
+  -- Provides intelligent parsing and analysis of source code for better highlighting,
+  -- indentation, and code manipulation capabilities
   "nvim-treesitter/nvim-treesitter",
+  
+  -- Automatically update parsers when plugin is installed/updated
   build = ":TSUpdate",
-  main = "nvim-treesitter.configs", -- Sets main module to use for opts
-  -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
+  
+  -- Configure via nvim-treesitter.configs module
+  main = "nvim-treesitter.configs",
+  
   opts = {
+    -- Languages to install parsers for
     ensure_installed = {
-      "javascript",
-      "typescript",
+      "javascript", -- JavaScript support
+      "typescript", -- TypeScript support
     },
-    -- Autoinstall languages that are not installed
+
+    -- Automatically install parsers for new filetypes
     auto_install = true,
+
+    -- Configure syntax highlighting
     highlight = {
       enable = true,
-      -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-      --  If you are experiencing weird indenting issues, add the language to
-      --  the list of additional_vim_regex_highlighting and disabled languages for indent.
+      
+      -- Ruby requires vim's regex highlighting for proper indentation
+      -- Add other languages here if experiencing indentation issues
       additional_vim_regex_highlighting = { "ruby" },
     },
-    indent = { enable = true, disable = { "ruby" } },
+
+    -- Configure automatic indentation
+    indent = {
+      enable = true,
+      disable = { "ruby" }, -- Disable for Ruby due to regex dependency
+    },
+
+    -- Configure text objects for syntax-aware selection
+    textobjects = {
+      select = {
+        enable = true,
+        lookahead = true,
+        keymaps = {
+          ["aa"] = "@parameter.outer",
+          ["ia"] = "@parameter.inner",
+          ["af"] = "@function.outer",
+          ["if"] = "@function.inner",
+          ["ab"] = { query = "@braces.around", query_group = "surroundings" },
+          ["ib"] = { query = "@braces.inner", query_group = "surroundings" },
+          ["aq"] = { query = "@quotes.around", query_group = "surroundings" },
+          ["iq"] = { query = "@quotes.inner", query_group = "surroundings" },
+        },
+      },
+    },
   },
-  -- There are additional nvim-treesitter modules that you can use to interact
-  -- with nvim-treesitter. You should go explore a few and see what interests you:
+
+  -- Additional recommended modules:
+  -- 1. Incremental selection - Built-in, extends selection based on syntax tree
+  --    See: `:help nvim-treesitter-incremental-selection-mod`
   --
-  --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
-  --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
-  --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+  -- 2. Context display - Shows code context in floating window
+  --    Plugin: nvim-treesitter/nvim-treesitter-context
+  --
+  -- 3. Text objects - Provides syntax-aware text objects
+  --    Plugin: nvim-treesitter/nvim-treesitter-textobjects
 }
