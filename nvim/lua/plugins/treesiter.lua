@@ -3,13 +3,13 @@ return {
   -- Provides intelligent parsing and analysis of source code for better highlighting,
   -- indentation, and code manipulation capabilities
   "nvim-treesitter/nvim-treesitter",
-  
+
   -- Automatically update parsers when plugin is installed/updated
   build = ":TSUpdate",
-  
+
   -- Configure via nvim-treesitter.configs module
   main = "nvim-treesitter.configs",
-  
+
   opts = {
     -- Languages to install parsers for
     ensure_installed = {
@@ -23,7 +23,7 @@ return {
     -- Configure syntax highlighting
     highlight = {
       enable = true,
-      
+
       -- Ruby requires vim's regex highlighting for proper indentation
       -- Add other languages here if experiencing indentation issues
       additional_vim_regex_highlighting = { "ruby" },

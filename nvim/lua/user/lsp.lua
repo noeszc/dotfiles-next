@@ -1,4 +1,5 @@
 local builtin = require("telescope.builtin")
+local navic = require("nvim-navic")
 local themes = require("telescope.themes")
 
 local M = {}
@@ -9,10 +10,14 @@ M.handlers = {
   }),
 }
 
-function M.on_attach(_, bufnr)
+function M.on_attach(client, bufnr)
   local map = function(keys, func, desc)
     vim.keymap.set("n", keys, func, { buffer = bufnr, desc = "LSP: " .. desc })
   end
+  if client.server_capabilities.documentSymbolProvider then
+    navic.attach(client, bufnr)
+  end
+
   -- Jump to the definition of the word under your cursor.
   --  This is where a variable was first declared, or where a function is defined, etc.
   --  To jump back, press <C-t>.

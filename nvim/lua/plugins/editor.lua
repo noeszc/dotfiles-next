@@ -7,7 +7,6 @@ return {
     dependencies = { "nvim-lua/plenary.nvim" },
     opts = { signs = false }, -- Disable gutter signs
   },
-
   -- Comment.nvim: Smart code commenting
   -- Provides commands to comment/uncomment code blocks
   {
@@ -81,17 +80,32 @@ return {
       -- Adds, deletes, or replaces surrounding characters
       require("mini.surround").setup()
 
-      -- Mini.statusline: Minimal status line
-      -- Provides essential information in a clean format
       local statusline = require("mini.statusline")
-      statusline.setup({ use_icons = vim.g.have_nerd_font })
 
-      -- Customize statusline location section
-      -- Shows cursor position as LINE:COLUMN
-      ---@diagnostic disable-next-line: duplicate-set-field
-      statusline.section_location = function()
-        return "%2l:%-2v"
-      end
+      statusline.setup({
+        use_icons = vim.g.have_nerd_font,
+        content = {
+          active = function()
+            local utils = require("user.statusline")
+            local _, mode_hl = MiniStatusline.section_mode({ trunc_width = 120 })
+            local filename_and_diagnostics = utils.get_filename() .. " " .. utils.get_diagnostics()
+            return statusline.combine_groups({
+              {
+                -- hl = "MiniStatuslineFilename",
+                strings = { filename = filename_and_diagnostics },
+              },
+              "%<", -- Truncate point
+              {
+                -- hl = "MiniStatuslineFilename",
+                strings = { diagnostics = utils.statusbar_navic() },
+              },
+              "%=", -- End left alignment
+              { strings = { git = utils.get_git_status() } },
+              { hl = mode_hl, strings = { mode = utils.get_current_mode() } },
+            })
+          end,
+        },
+      })
     end,
   },
 }

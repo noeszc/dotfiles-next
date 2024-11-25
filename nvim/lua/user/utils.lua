@@ -50,4 +50,39 @@ M.is_npm_installed = function(package)
   return false
 end
 
+M.treesiter_context = function()
+  local navic = require("nvim-navic")
+  navic.setup({
+    icons = {
+      File = "",
+      Module = "",
+      Namespace = "",
+      Package = "",
+      Class = "",
+      Method = "",
+      Property = "",
+      Field = "",
+      Constructor = "",
+      Enum = "",
+      Interface = "",
+      Function = "",
+      Variable = "",
+      Constant = "",
+      String = "",
+      Number = "",
+      Boolean = "",
+      Array = "",
+      Object = "",
+      Key = "",
+      Null = "",
+      EnumMember = "",
+      Struct = "",
+      Event = "",
+      Operator = "",
+      TypeParameter = "",
+    },
+    depth_limit = 3,
+  })
+end
+
 return M

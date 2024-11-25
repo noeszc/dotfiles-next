@@ -16,10 +16,15 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
   spec = {
-    { "lukas-reineke/indent-blankline.nvim", event = "BufReadPre", main = "ibl", opts = {} },
-    { "kylechui/nvim-surround", keys = { "cs", "ds", "ys" }, opts = {} },
-    { "windwp/nvim-autopairs", event = "InsertEnter", opts = { check_ts = true } },
-    { "windwp/nvim-ts-autotag", event = "InsertEnter", opts = {} },
+    {
+      "miikanissi/modus-themes.nvim",
+      lazy = false,
+      priority = 1000,
+      config = function()
+        vim.cmd.colorscheme("modus_operandi")
+      end,
+    },
+    { "SmiteshP/nvim-navic" },
     { import = "plugins" },
   },
   install = { colorscheme = { "habamax" } },

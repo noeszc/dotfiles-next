@@ -7,7 +7,7 @@ local formatters_by_ft = {
 ---@type string[]
 local prettierd_ft = {
   "typescript",
-  "typescriptreact", 
+  "typescriptreact",
   "javascript",
   "javascriptreact",
   "html",
