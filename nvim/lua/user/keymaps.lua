@@ -28,9 +28,8 @@ vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper win
 
 -- Line movement mappings with OS-specific Alt key handling
 -- On macOS, Alt+j produces ∆ and Alt+k produces ˚
-local Aj = fn.has("macunix") == 1 and "∆" or "<A-j>"
-local Ak = fn.has("macunix") == 1 and "˚" or "<A-k>"
-
+local Aj = fn.has("macunix") == 1 and "<A-j>" or "<A-j>"
+local Ak = fn.has("macunix") == 1 and "<A-k>" or "<A-k>"
 -- Move lines up and down in normal and visual modes
 map("n", Aj, ":m .+1<CR>==", { silent = true })      -- Move current line down
 map("n", Ak, ":m .-2<CR>==", { silent = true })      -- Move current line up

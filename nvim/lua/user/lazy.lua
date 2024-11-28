@@ -17,11 +17,12 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
   spec = {
     {
-      "miikanissi/modus-themes.nvim",
+      "rose-pine/neovim",
+      name = "rose-pine",
       lazy = false,
       priority = 1000,
       config = function()
-        vim.cmd.colorscheme("modus_operandi")
+        vim.cmd.colorscheme("rose-pine")
       end,
     },
     { "SmiteshP/nvim-navic" },

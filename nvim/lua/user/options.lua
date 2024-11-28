@@ -38,8 +38,6 @@ vim.opt.updatetime = 250 -- Faster update time for better UX
 vim.opt.timeoutlen = 300 -- Time to wait for mapped sequence
 vim.opt.splitright = true -- Open vertical splits to the right
 vim.opt.splitbelow = true -- Open horizontal splits below
--- vim.keymap.set("n", "<a-l>", "<cmd><cr>", { silent = true })
--- vim.opt.cmdheight = 0
 
 -- Visual indicators
 vim.opt.list = true -- Show invisible characters
