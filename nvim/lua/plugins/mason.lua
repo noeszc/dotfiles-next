@@ -20,10 +20,11 @@ return {
     -- Configure automatic installation of LSP servers
     mason_lspconfig.setup({
       ensure_installed = {
-        "lua_ls",        -- Lua language server
+        "lua_ls", -- Lua language server
         "rust_analyzer", -- Rust language server
-        "eslint",       -- JavaScript/TypeScript linter
-        "stylelint_lsp" -- CSS/SCSS/Less linter
+        "eslint", -- JavaScript/TypeScript linter
+        "stylelint_lsp", -- CSS/SCSS/Less linter
+        "vtsls",
       },
     })
 
@@ -35,7 +36,7 @@ return {
 
         -- Formatters
         "prettierd", -- Fast JavaScript/TypeScript/CSS formatter
-        "stylua",    -- Lua code formatter
+        "stylua", -- Lua code formatter
       },
     })
 

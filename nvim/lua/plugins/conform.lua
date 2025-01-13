@@ -6,10 +6,10 @@ local formatters_by_ft = {
 -- List of filetypes that should use prettierd formatter
 ---@type string[]
 local prettierd_ft = {
-  "typescript",
-  "typescriptreact",
   "javascript",
   "javascriptreact",
+  "typescript",
+  "typescriptreact",
   "html",
   "css",
   "postcsss",
