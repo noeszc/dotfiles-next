@@ -31,7 +31,11 @@ vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper win
 local Aj = fn.has("macunix") == 1 and "<A-j>" or "<A-j>"
 local Ak = fn.has("macunix") == 1 and "<A-k>" or "<A-k>"
 -- Move lines up and down in normal and visual modes
-map("n", Aj, ":m .+1<CR>==", { silent = true })      -- Move current line down
-map("n", Ak, ":m .-2<CR>==", { silent = true })      -- Move current line up
-map("v", Aj, ":m '>+1<CR>gv=gv", { silent = true })  -- Move selected lines down
-map("v", Ak, ":m '<-2<CR>gv=gv", { silent = true })  -- Move selected lines up
+map("n", Aj, ":m .+1<CR>==", { silent = true }) -- Move current line down
+map("n", Ak, ":m .-2<CR>==", { silent = true }) -- Move current line up
+map("v", Aj, ":m '>+1<CR>gv=gv", { silent = true }) -- Move selected lines down
+map("v", Ak, ":m '<-2<CR>gv=gv", { silent = true }) -- Move selected lines up
+
+-- Line jumps
+vim.keymap.set("n", "H", "^", { noremap = true, silent = true }) -- Map H to move to the beginning of the line
+vim.keymap.set("n", "L", "g_", { noremap = true, silent = true }) -- Map L to move to the last line of the screen
