@@ -16,21 +16,30 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
   spec = {
+    -- Lazy
     {
-      "rose-pine/neovim",
-      name = "rose-pine",
-      lazy = false,
-      priority = 1000,
+      "vague2k/vague.nvim",
       config = function()
-        require("rose-pine").setup({
-          styles = {
-            italic = false,
-            bold = false,
-          },
-        })
-        vim.cmd.colorscheme("rose-pine")
+        require("vague").setup({ transparent = true })
+        vim.cmd("colorscheme vague")
+        vim.cmd(":hi statusline guibg=NONE")
       end,
     },
+    -- {
+    --   "rose-pine/neovim",
+    --   name = "rose-pine",
+    --   lazy = false,
+    --   priority = 1000,
+    --   config = function()
+    --     require("rose-pine").setup({
+    --       styles = {
+    --         italic = false,
+    --         bold = false,
+    --       },
+    --     })
+    --     vim.cmd.colorscheme("rose-pine")
+    --   end,
+    -- },
     { "SmiteshP/nvim-navic" },
     { import = "plugins" },
   },
