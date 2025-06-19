@@ -17,11 +17,26 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
   spec = {
     -- Lazy
+    -- {
+    --   "vague2k/vague.nvim",
+    --   config = function()
+    --     require("vague").setup({ transparent = true, bold = false, italic = false })
+    --     vim.cmd("colorscheme vague")
+    --     vim.cmd(":hi statusline guibg=NONE")
+    --   end,
+    -- },
     {
-      "vague2k/vague.nvim",
+      "webhooked/kanso.nvim",
+      lazy = false,
+      priority = 1000,
       config = function()
-        require("vague").setup({ transparent = true })
-        vim.cmd("colorscheme vague")
+        require("kanso").setup({
+          bold = false,
+          italic = false,
+          commentStyle = { italic = false },
+          keywordStyle = { italic = false },
+        })
+        vim.cmd("colorscheme kanso-ink")
         vim.cmd(":hi statusline guibg=NONE")
       end,
     },

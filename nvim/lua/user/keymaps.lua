@@ -27,16 +27,16 @@ map("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
 map("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 
 -- Line movement mappings with OS-specific Alt key handling
-local Aj = fn.has("macunix") == 1 and "<A-j>" or "<A-j>"
-local Ak = fn.has("macunix") == 1 and "<A-k>" or "<A-k>"
-map("n", Aj, ":m .+1<CR>==", { silent = true }) -- Move current line down
-map("n", Ak, ":m .-2<CR>==", { silent = true }) -- Move current line up
-map("v", Aj, ":m '>+1<CR>gv=gv", { silent = true }) -- Move selected lines down
-map("v", Ak, ":m '<-2<CR>gv=gv", { silent = true }) -- Move selected lines up
+-- local Aj = fn.has("macunix") == 1 and "<A-j>" or "<A-j>"
+-- local Ak = fn.has("macunix") == 1 and "<A-k>" or "<A-k>"
+-- map("n", Aj, ":m .+1<CR>==", { silent = true }) -- Move current line down
+-- map("n", Ak, ":m .-2<CR>==", { silent = true }) -- Move current line up
+-- map("v", Aj, ":m '>+1<CR>gv=gv", { silent = true }) -- Move selected lines down
+-- map("v", Ak, ":m '<-2<CR>gv=gv", { silent = true }) -- Move selected lines up
 
 -- Line jumps
-map("n", "H", "^", { noremap = true, silent = true }) -- Map H to move to the beginning of the line
-map("n", "L", "g_", { noremap = true, silent = true }) -- Map L to move to the last line of the screen
+-- map("n", "H", "^", { noremap = true, silent = true }) -- Map H to move to the beginning of the line
+-- map("n", "L", "g_", { noremap = true, silent = true }) -- Map L to move to the last line of the screen
 
 -- Fix indenting using < and >
 map("v", ">", ">gv")

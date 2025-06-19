@@ -19,6 +19,7 @@ return {
 
     -- Configure automatic installation of LSP servers
     mason_lspconfig.setup({
+      automatic_enable = false,
       ensure_installed = {
         "lua_ls", -- Lua language server
         "rust_analyzer", -- Rust language server
