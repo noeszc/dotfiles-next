@@ -1,4 +1,4 @@
-# ALIASES ---------------------------------------------------------------------
+#_ALIASES ---------------------------------------------------------------------
 
 # System Utilities
 alias unmount_all_and_exit='unmount_all && exit'
@@ -114,9 +114,12 @@ alias gup='git branch --set-upstream-to=origin/$(git-current-branch) $(git-curre
 alias gnext='git log --ancestry-path --format=%H ${commit}..master | tail -1 | xargs git checkout'
 alias gprev='git checkout HEAD^'
 
+# AI-powered 
 alias gai='interactive_ai_commit'
 alias gaim='show_ai_commit_message'
 alias gcai='git add -A && interactive_ai_commit'  # Add all and AI commit
+alias gprai='interactive_ai_pr'
+alias gprad='show_ai_pr_description'
 
 # FUNCTIONS -------------------------------------------------------------------
 
