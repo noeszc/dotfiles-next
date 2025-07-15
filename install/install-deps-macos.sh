@@ -14,6 +14,7 @@ brew install tmux
 brew install tree
 brew install fzf
 brew install ripgrep
+brew install shfmt
 
 brew install the_silver_searcher
 brew install yt-dlp
