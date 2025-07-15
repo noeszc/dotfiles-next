@@ -94,7 +94,8 @@ alias gec='git status | grep "both modified:" | cut -d ":" -f 2 | trim | xargs n
 alias gcan='gc --amend --no-edit'
 
 # Git Push and Open Pull Request
-alias gp="git push -u 2>&1 | tee >(cat) | grep \"pull/new\" | awk '{print \$2}' | xargs open"
+alias gp="git_push_current"
+alias gpo='git_push_current --open'
 
 # Git Force Push with Lease
 alias gpf='git push --force-with-lease'
@@ -114,7 +115,7 @@ alias gup='git branch --set-upstream-to=origin/$(git-current-branch) $(git-curre
 alias gnext='git log --ancestry-path --format=%H ${commit}..master | tail -1 | xargs git checkout'
 alias gprev='git checkout HEAD^'
 
-# AI-powered 
+# AI-powered
 alias gai='interactive_ai_commit'
 alias gaim='show_ai_commit_message'
 alias gcai='git add -A && interactive_ai_commit'  # Add all and AI commit
@@ -138,18 +139,17 @@ note() {
 
 # Unmount All External Disks
 function unmount_all {
-    diskutil list |
-    grep external |
-    cut -d ' ' -f 1 |
-    while read file
-    do
-        diskutil unmountDisk "$file"
-    done
+    diskutil list \
+                  | grep external \
+                  | cut -d ' ' -f 1 \
+                    | while read file; do
+            diskutil unmountDisk "$file"
+        done
 }
 
 # Fast-Forward Merge
-mff () {
-    local curr_branch=`git-current-branch`
+mff()  {
+    local curr_branch=$(git-current-branch)
     gco master
     ff
     gco $curr_branch
@@ -162,7 +162,7 @@ if [ -f "$JOBFILE" ]; then
 fi
 
 # Docker Cleanup
-dclear () {
+dclear()  {
     docker ps -a -q | xargs docker kill -f
     docker ps -a -q | xargs docker rm -f
     docker images | grep "api\|none" | awk '{print $3}' | xargs docker rmi -f
@@ -171,7 +171,7 @@ dclear () {
 alias docker-clear=dclear
 
 # Docker Full Reset
-dreset () {
+dreset()  {
     dclear
     docker images -q | xargs docker rmi -f
     docker volume rm $(docker volume ls | awk '{print $2}')
@@ -180,24 +180,24 @@ dreset () {
 }
 
 # Extract Audio and Video from Media File
-extract-audio-and-video () {
+extract-audio-and-video()  {
     ffmpeg -i "$1" -c:a copy obs-audio.aac
     ffmpeg -i "$1" -c:v copy obs-video.mp4
 }
 
 # Show HTTP Status
-hs () {
+hs()  {
     curl https://httpstat.us/$1
 }
 
 # Copy Line to Clipboard
-copy-line () {
-  rg --line-number "${1:-.}" | sk --delimiter ':' --preview 'bat --color=always --highlight-line {2} {1}' | awk -F ':' '{print $3}' | sed 's/^\s+//' | pbcopy
+copy-line()  {
+    rg --line-number "${1:-.}" | sk --delimiter ':' --preview 'bat --color=always --highlight-line {2} {1}' | awk -F ':' '{print $3}' | sed 's/^\s+//' | pbcopy
 }
 
 # Open Editor at Specific Line
-open-at-line () {
-  vim $(rg --line-number "${1:-.}" | sk --delimiter ':' --preview 'bat --color=always --highlight-line {2} {1}' | awk -F ':' '{print "+"$2" "$1}')
+open-at-line()  {
+    vim $(rg --line-number "${1:-.}" | sk --delimiter ':' --preview 'bat --color=always --highlight-line {2} {1}' | awk -F ':' '{print "+"$2" "$1}')
 }
 
 # Alias for Ledger with File Path
@@ -208,4 +208,3 @@ alias yip='yarn install --pure-lockfile'
 
 # Toggle Terminal Dark Mode
 alias dark="$DOTFILES/bin/toggle-terminal-dark-mode.sh"
-

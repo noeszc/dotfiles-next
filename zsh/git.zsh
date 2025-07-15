@@ -337,3 +337,32 @@ show_ai_pr_description() {
     local input="Branch: $current_branch → $target_branch\n\nCommits:\n$commits\n\nDiff:\n$diff"
     echo -e "$input" | generate_ai_pr_description
 }
+
+# Git push current branch with upstream and optional PR opening
+git_push_current() {
+    local current_branch=$(git_current_branch)
+
+    if ! git rev-parse --git-dir > /dev/null 2>&1; then
+        echo "Not in a git repository" >&2
+        return 1
+    fi
+
+    echo "Pushing branch: $current_branch"
+
+    if git push -u origin HEAD; then
+        echo "Successfully pushed $current_branch"
+
+        if [[ "$1" == "--open" ]] || [[ "$1" == "-o" ]]; then
+            local pr_url=$(git push -u origin HEAD 2>&1 | grep "pull/new" | awk '{print $2}')
+            if [[ -n "$pr_url" ]]; then
+                echo "Opening PR: $pr_url"
+                open "$pr_url"
+            else
+                echo "No PR URL found (branch might already exist on remote)"
+            fi
+        fi
+    else
+        echo "Failed to push $current_branch"
+        return 1
+    fi
+}
