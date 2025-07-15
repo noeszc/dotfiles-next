@@ -114,6 +114,10 @@ alias gup='git branch --set-upstream-to=origin/$(git-current-branch) $(git-curre
 alias gnext='git log --ancestry-path --format=%H ${commit}..master | tail -1 | xargs git checkout'
 alias gprev='git checkout HEAD^'
 
+alias gai='interactive_ai_commit'
+alias gaim='show_ai_commit_message'
+alias gcai='git add -A && interactive_ai_commit'  # Add all and AI commit
+
 # FUNCTIONS -------------------------------------------------------------------
 
 # Create a Directory and Navigate to It

@@ -5,6 +5,7 @@ source_if_exists () {
 }
 
 source_if_exists $HOME/.env.sh
+source_if_exists $DOTFILES/zsh/secrets.zsh
 source_if_exists $DOTFILES/zsh/zplug.zsh
 source_if_exists $DOTFILES/zsh/git.zsh
 source_if_exists ~/.fzf.zsh

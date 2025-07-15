@@ -78,3 +78,117 @@ git_page_maybe() {
     fi
 }
 
+# AI-powered Git Functions
+generate_ai_commit_message() {
+    local diff="${1:-$(cat)}"
+    
+    if [ -z "$OPENAI_API_KEY" ]; then
+        echo "Error: OPENAI_API_KEY not set" >&2
+        return 1
+    fi
+    
+    local escaped_diff=$(echo "$diff" | jq -Rs .)
+    local system_prompt="You are a git commit message generator. Follow conventional commits format. Be concise and descriptive."
+    local user_prompt="Generate a conventional commit message for this git diff. Format: type(scope): description. Be concise.\n\n$diff"
+    local escaped_user_prompt=$(echo "$user_prompt" | jq -Rs .)
+    
+    curl -s -X POST "https://api.openai.com/v1/chat/completions" \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer $OPENAI_API_KEY" \
+        -d "{
+            \"model\": \"gpt-4o-mini\",
+            \"messages\": [
+                {\"role\": \"system\", \"content\": $(echo "$system_prompt" | jq -Rs .)},
+                {\"role\": \"user\", \"content\": $escaped_user_prompt}
+            ],
+            \"max_tokens\": 80,
+            \"temperature\": 0.3
+        }" | jq -r '.choices[0].message.content // empty'
+}
+
+get_git_staged_diff() {
+    git diff --cached --no-color
+}
+
+interactive_ai_commit() {
+    if ! git rev-parse --git-dir > /dev/null 2>&1; then
+        echo "Not in a git repository" >&2
+        return 1
+    fi
+    
+    local diff=$(get_git_staged_diff)
+    
+    if [ -z "$diff" ]; then
+        echo "No staged changes. Stage with: git add ."
+        return 1
+    fi
+    
+    echo "Generating commit message..."
+    local msg=$(echo "$diff" | generate_ai_commit_message)
+    
+    if [ -z "$msg" ]; then
+        echo "Failed to generate commit message"
+        return 1
+    fi
+    
+    echo "AI suggests: $msg"
+    echo -n "Use this message? [y/N] "
+    read -r response
+    
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        git commit -m "$msg"
+        echo "Committed successfully!"
+    else
+        echo "Aborted."
+    fi
+}
+
+show_ai_commit_message() {
+    get_git_staged_diff | generate_ai_commit_message
+}
+
+debug_ai_commit() {
+    local diff=$(get_git_staged_diff)
+    
+    echo "=== DEBUG ==="
+    echo "API Key set: ${OPENAI_API_KEY:+YES}"
+    echo "Diff length: ${#diff}"
+    echo "First 100 chars of diff:"
+    echo "${diff:0:100}"
+    echo "============="
+    
+    # Probar la API call
+    local response=$(echo "$diff" | generate_ai_commit_message)
+    echo "API Response: '$response'"
+}
+
+debug_ai_commit_deep() {
+    local diff=$(get_git_staged_diff)
+    local prompt="Generate a conventional commit message for this git diff. Format: type(scope): description. Be concise.\n\n$diff"
+    
+    echo "=== DEEP DEBUG ==="
+    echo "Calling OpenAI API..."
+    
+    # Llamada con debug completo
+    local full_response=$(curl -s -X POST "https://api.openai.com/v1/chat/completions" \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer $OPENAI_API_KEY" \
+        -d "{
+            \"model\": \"gpt-4o-mini\",
+            \"messages\": [
+                {\"role\": \"system\", \"content\": \"You are a git commit message generator. Follow conventional commits format. Be concise and descriptive.\"},
+                {\"role\": \"user\", \"content\": \"$prompt\"}
+            ],
+            \"max_tokens\": 80,
+            \"temperature\": 0.3
+        }")
+    
+    echo "Full API Response:"
+    echo "$full_response"
+    echo "=================="
+    
+    # Probar el parsing
+    local parsed=$(echo "$full_response" | jq -r '.choices[0].message.content // empty')
+    echo "Parsed message: '$parsed'"
+    echo "=================="
+}
