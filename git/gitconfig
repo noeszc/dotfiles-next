@@ -19,6 +19,7 @@
 # Core settings
 [core]
     pager = delta
+		sshCommand = ssh -i ~/.ssh/id_rsa -F /dev/null
 
 [delta]
     line-numbers = true
