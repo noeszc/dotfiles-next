@@ -20,3 +20,4 @@ sudo dnf install -y shfmt
 sudo dnf install -y the_silver_searcher
 sudo dnf install -y yt-dlp
 sudo dnf install -y zoxide
+sudo dnf install git-delta
