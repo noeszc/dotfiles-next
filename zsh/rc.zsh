@@ -10,7 +10,15 @@ source_if_exists $DOTFILES/zsh/zplug.zsh
 source_if_exists $DOTFILES/zsh/git.zsh
 source_if_exists ~/.fzf.zsh
 source_if_exists $DOTFILES/zsh/aliases.zsh
-source_if_exists /opt/homebrew/etc/profile.d/z.sh
+
+# z/zoxide - detección por OS
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    source_if_exists /opt/homebrew/etc/profile.d/z.sh
+else
+    if command -v zoxide > /dev/null; then
+        eval "$(zoxide init zsh)"
+    fi
+fi
 
 if type "direnv" > /dev/null; then
     eval "$(direnv hook zsh)"
@@ -29,24 +37,18 @@ precmd() {
     source $DOTFILES/zsh/aliases.zsh
 }
 
-# Zsh theme light
-SOBOLE_THEME_MODE='dark'
-
-export VISUAL=nvim
-export EDITOR=nvim
-export PATH="$PATH:/usr/local/sbin:$DOTFILES/bin:$HOME/.local/bin"
-
 # FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-export FZF_DEFAULT_COMMAND='rg --files'
 
 # Fast Node Manager (fnm)
-eval "$(fnm env --use-on-cd)"
-
-# pnpm
-export PNPM_HOME="/Users/$USER/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  if command -v fnm > /dev/null; then
+    eval "$(fnm env --use-on-cd)"
+  fi
+else
+  FNM_PATH="$HOME/.local/share/fnm"
+  if [ -d "$FNM_PATH" ]; then
+    export PATH="$FNM_PATH:$PATH"
+    eval "$(fnm env --use-on-cd)"
+  fi
+fi

@@ -1,0 +1,36 @@
+[user]
+    name = Noe Sanchez
+    email = noeszc@gmail.com
+
+# Work context
+[includeIf "gitdir:~/code/work/"]
+    path = ~/.work.gitconfig
+
+# URL shortcuts
+[url "git@github.com:clara-team/"]
+    insteadOf = "work:"
+
+[url "git@github.com:noeszc-clara/"]
+    insteadOf = "work:"
+
+[url "git@github.com:noeszc/"]
+    insteadOf = "me:"
+
+# Core settings
+[core]
+    pager = delta
+
+[delta]
+    line-numbers = true
+
+[interactive]
+    diffFilter = delta --color-only
+
+[merge]
+    conflictstyle = diff3
+
+[diff]
+    colorMoved = default
+
+[push]
+    autoSetupRemote = true

@@ -34,7 +34,9 @@ require("lazy").setup({
           bold = false,
           italic = false,
           commentStyle = { italic = false },
+          functionStyle = { italic = false },
           keywordStyle = { italic = false },
+          statementStyle = { italic = false },
         })
         vim.cmd("colorscheme kanso-ink")
         vim.cmd(":hi statusline guibg=NONE")
