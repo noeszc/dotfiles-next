@@ -1,25 +1,16 @@
 [user]
-    name = Noe Sanchez
+    name = Noé Sánchez
     email = noeszc@gmail.com
 
-# Work context
 [includeIf "gitdir:~/code/work/"]
     path = ~/.work.gitconfig
-
-# URL shortcuts
-[url "git@gitlab.com:cincel.digital/"]
-    insteadOf = "work:"
-
-[url "git@ggitlab.com:noeszc/"]
-    insteadOf = "work:"
 
 [url "git@github.com:noeszc/"]
     insteadOf = "me:"
 
-# Core settings
 [core]
     pager = delta
-    sshCommand = ssh -i ~/.ssh/id_rsa -F /dev/null
+    sshCommand = ssh -i ~/.ssh/id_ed25519 -F /dev/null
 
 [delta]
     line-numbers = true
