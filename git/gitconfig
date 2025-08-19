@@ -7,10 +7,10 @@
     path = ~/.work.gitconfig
 
 # URL shortcuts
-[url "git@github.com:clara-team/"]
+[url "git@gitlab.com:cincel.digital/"]
     insteadOf = "work:"
 
-[url "git@github.com:noeszc-clara/"]
+[url "git@ggitlab.com:noeszc/"]
     insteadOf = "work:"
 
 [url "git@github.com:noeszc/"]

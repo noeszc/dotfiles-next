@@ -36,6 +36,12 @@ fi
 precmd() {
     source $DOTFILES/zsh/aliases.zsh
 }
+# Zsh theme light
+SOBOLE_THEME_MODE='dark'
+
+export VISUAL=nvim
+export EDITOR=nvim
+export PATH="$PATH:/usr/local/sbin:$DOTFILES/bin:$HOME/.local/bin:$HOME/.cargo/bin"
 
 # FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -52,3 +58,11 @@ else
     eval "$(fnm env --use-on-cd)"
   fi
 fi
+
+# pnpm - OS agnostic
+export PNPM_HOME="$HOME/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
