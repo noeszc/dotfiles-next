@@ -2,15 +2,14 @@
     name = Noé Sánchez
     email = noeszc@gmail.com
 
-[includeIf "gitdir:~/code/work/"]
-    path = ~/.work.gitconfig
-
 [url "git@github.com:noeszc/"]
     insteadOf = "me:"
 
+[includeIf "gitdir:~/code/work/"]
+    path = ~/.work.gitconfig
+
 [core]
     pager = delta
-    sshCommand = ssh -i ~/.ssh/id_ed25519 -F /dev/null
 
 [delta]
     line-numbers = true

@@ -8,6 +8,7 @@ source_if_exists $HOME/.env.sh
 source_if_exists $DOTFILES/zsh/secrets.zsh
 source_if_exists $DOTFILES/zsh/zplug.zsh
 source_if_exists $DOTFILES/zsh/git.zsh
+source_if_exists /opt/homebrew/etc/profile.d/z.sh
 source_if_exists ~/.fzf.zsh
 source_if_exists $DOTFILES/zsh/aliases.zsh
 
@@ -41,7 +42,7 @@ SOBOLE_THEME_MODE='dark'
 
 export VISUAL=nvim
 export EDITOR=nvim
-export PATH="$PATH:/usr/local/sbin:$DOTFILES/bin:$HOME/.local/bin:$HOME/.cargo/bin"
+export PATH="$PATH:/usr/local/sbin:$DOTFILES/bin:$HOME/.local/bin"
 
 # FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -59,10 +60,12 @@ else
   fi
 fi
 
-# pnpm - OS agnostic
-export PNPM_HOME="$HOME/.local/share/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
+# pnpm  
+if [[ -d "$HOME/.local/share/pnpm" ]]; then
+    export PNPM_HOME="$HOME/.local/share/pnpm"
+    case ":$PATH:" in
+        *":$PNMP_HOME:"*) ;;
+        *) export PATH="$PNPM_HOME:$PATH" ;;
+    esac
+fi
 # pnpm end
