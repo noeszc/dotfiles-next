@@ -1,4 +1,5 @@
-brew install --cask kitty
+# brew install --cask kitty
+brew install --cask ghostty
 brew install fnm
 brew install neovim
 brew install rust
