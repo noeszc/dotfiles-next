@@ -39,24 +39,9 @@ require("lazy").setup({
           statementStyle = { italic = false },
         })
         vim.cmd("colorscheme kanso-ink")
-        vim.cmd(":hi statusline guibg=NONE")
+        -- vim.cmd(":hi statusline guibg=NONE")
       end,
     },
-    -- {
-    --   "rose-pine/neovim",
-    --   name = "rose-pine",
-    --   lazy = false,
-    --   priority = 1000,
-    --   config = function()
-    --     require("rose-pine").setup({
-    --       styles = {
-    --         italic = false,
-    --         bold = false,
-    --       },
-    --     })
-    --     vim.cmd.colorscheme("rose-pine")
-    --   end,
-    -- },
     { "SmiteshP/nvim-navic" },
     { import = "plugins" },
   },

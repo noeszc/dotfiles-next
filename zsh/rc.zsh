@@ -44,6 +44,11 @@ export VISUAL=nvim
 export EDITOR=nvim
 export PATH="$PATH:/usr/local/sbin:$DOTFILES/bin:$HOME/.local/bin"
 
+# Rust/Cargo - agnóstico al SO
+if [[ -d "$HOME/.cargo/bin" ]]; then
+    export PATH="$HOME/.cargo/bin:$PATH"
+fi
+
 # FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -68,4 +73,22 @@ if [[ -d "$HOME/.local/share/pnpm" ]]; then
         *) export PATH="$PNPM_HOME:$PATH" ;;
     esac
 fi
+# pnpm end
+
+# opencode
+export PATH=/home/attractor/.opencode/bin:$PATH
+
+# fnm
+FNM_PATH="/home/attractor/.local/share/fnm"
+if [ -d "$FNM_PATH" ]; then
+  export PATH="$FNM_PATH:$PATH"
+  eval "`fnm env`"
+fi
+
+# pnpm
+export PNPM_HOME="/home/attractor/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
 # pnpm end
