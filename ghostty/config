@@ -1,64 +1,33 @@
-# ============================================================================
-# GHOSTTY CONFIGURATION - KANSO THEME
-# ============================================================================
-
-# Font Configuration
+# font configuration
 font-family                    = CommitMono
 font-family-italic             = CommitMono
+font-family-bold               = CommitMono
 font-family-bold-italic        = CommitMono
 font-style-italic              = false
 font-style-bold-italic         = false
-font-size                      = 11
+font-style-bold                = false
+font-synthetic-style           = false
+font-size                      = 14
 
-# Spacing & Layout
+# spacing & kayout
 adjust-cell-height             = 25%
 adjust-cell-width             =  0%
 window-padding-x               = 12
 window-padding-y               = 10
 
-# Shell Integration
+# shell integration
 shell-integration              = zsh
 
-# ============================================================================
-# KANSO THEME - COLOR PALETTE
-# ============================================================================
+# theme
+theme = dark:modus_vivendi_tritanopia,light:modus_operandi_tritanopia
 
-palette = 0=#14171d
-palette = 1=#c4746e
-palette = 2=#8a9a7b
-palette = 3=#c4b28a
-palette = 4=#8ba4b0
-palette = 5=#a292a3
-palette = 6=#8ea4a2
-palette = 7=#a4a7a4
-palette = 8=#5C6066
-palette = 9=#e46876
-palette = 10=#87a987
-palette = 11=#e6c384
-palette = 12=#7fb4ca
-palette = 13=#938aa9
-palette = 14=#7aa89f
-palette = 15=#c5c9c7
-
-background = #14171d
-foreground = #c5c9c7
-cursor-color = #c5c9c7
-selection-background = #3E424A
-selection-foreground = #c5c9c7
- 
-# ============================================================================
-# CURSOR & VISUAL ENHANCEMENTS
-# ============================================================================
-
+# cursor & visual
 adjust-cursor-thickness        = 3
 adjust-underline-position      = 3
-bold-is-bright                 = true
+bold-is-bright                 = false
 cursor-invert-fg-bg            = true
 cursor-opacity                 = 0.8
 
-# ============================================================================
-# INTERACTION & BEHAVIOR
-# ============================================================================
-
+# interaction & behaviour
 link-url                       = true
 mouse-hide-while-typing        = true

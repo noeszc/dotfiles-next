@@ -25,3 +25,30 @@
 
 [push]
     autoSetupRemote = true
+[safe]
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs
+	directory = /Users/noesanchez/actions-runner/_work/microfrontend-core-libs/microfrontend-core-libs

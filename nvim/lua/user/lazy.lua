@@ -16,47 +16,19 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
   spec = {
-    -- Lazy
-    -- {
-    --   "vague2k/vague.nvim",
-    --   config = function()
-    --     require("vague").setup({ transparent = true, bold = false, italic = false })
-    --     vim.cmd("colorscheme vague")
-    --     vim.cmd(":hi statusline guibg=NONE")
-    --   end,
-    -- },
     {
-      "webhooked/kanso.nvim",
-      lazy = false,
+      "miikanissi/modus-themes.nvim",
       priority = 1000,
       config = function()
-        require("kanso").setup({
-          bold = false,
-          italic = false,
-          commentStyle = { italic = false },
-          functionStyle = { italic = false },
-          keywordStyle = { italic = false },
-          statementStyle = { italic = false },
+        require("modus-themes").setup({
+          style = "auto",
+          variant = "tritanopia",
+          comments = { italic = false },
+          keywords = { italic = false },
         })
-        vim.cmd("colorscheme kanso-ink")
-        vim.cmd(":hi statusline guibg=NONE")
+        vim.cmd("colorscheme modus")
       end,
     },
-    -- {
-    --   "rose-pine/neovim",
-    --   name = "rose-pine",
-    --   lazy = false,
-    --   priority = 1000,
-    --   config = function()
-    --     require("rose-pine").setup({
-    --       styles = {
-    --         italic = false,
-    --         bold = false,
-    --       },
-    --     })
-    --     vim.cmd.colorscheme("rose-pine")
-    --   end,
-    -- },
     { "SmiteshP/nvim-navic" },
     { import = "plugins" },
   },

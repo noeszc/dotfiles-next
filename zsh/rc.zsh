@@ -69,3 +69,6 @@ if [[ -d "$HOME/.local/share/pnpm" ]]; then
     esac
 fi
 # pnpm end
+
+# opencode
+export PATH=/Users/noesanchez/.opencode/bin:$PATH

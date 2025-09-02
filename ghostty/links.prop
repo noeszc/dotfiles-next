@@ -1,1 +1,3 @@
 $DOTFILES/ghostty/config=$HOME/.config/ghostty/config
+$DOTFILES/ghostty/themes/modus_vivendi_tritanopia=$HOME/.config/ghostty/themes/modus_vivendi_tritanopia
+$DOTFILES/ghostty/themes/modus_operandi_tritanopia=$HOME/.config/ghostty/themes/modus_operandi_tritanopia
