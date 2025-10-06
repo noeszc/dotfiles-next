@@ -74,28 +74,79 @@ git_current_branch() {
 # Generate conventional commit message using OpenAI API from git diff
 generate_ai_commit_message() {
     local diff="${1:-$(cat)}"
+    local temp="${TEMP:-0.7}"
 
     if [ -z "$OPENAI_API_KEY" ]; then
         echo "Error: OPENAI_API_KEY not set" >&2
         return 1
     fi
 
-    local clean_diff=$(echo "$diff" | tr -d '\000-\031')
-    local prompt="Generate a conventional commit message for this git diff. Format: type(scope): description. Be concise.\n\n$clean_diff"
+    # Obtener contexto del repositorio
+    local repo_name=$(basename $(git rev-parse --show-toplevel 2>/dev/null) 2>/dev/null || echo "unknown")
+    local branch_name=$(git_current_branch 2>/dev/null || echo "unknown")
+    local files_changed=$(echo "$diff" | grep "^diff --git" | wc -l | tr -d ' ')
+
+    # Analizar tipos de archivos modificados
+    local file_types=$(echo "$diff" | grep "^diff --git" | sed 's/.*\///' | sed 's/.*\.//' | sort | uniq -c | sort -rn | head -3)
+
+    # Detectar patrones comunes
+    local has_tests=$(echo "$diff" | grep -q "test\|spec" && echo "true" || echo "false")
+    local has_config=$(echo "$diff" | grep -q "config\|\.json\|\.yml\|\.yaml" && echo "true" || echo "false")
+    local has_docs=$(echo "$diff" | grep -q "README\|\.md\|docs/" && echo "true" || echo "false")
+
+    local clean_diff=$(echo "$diff" | tr -d '\000-\031' | head -c 8000)  # Limitar tamaño
+
+    local system_prompt="You are an expert senior developer writing conventional commit messages.
+
+RULES:
+- Format: type(scope): description
+- Types: feat, fix, refactor, style, test, docs, chore, perf
+- Scope: specific component/module affected (e.g., auth, api, ui, tags)
+- Description: present tense, no period, under 50 chars total
+- Focus on WHAT changed and business impact, not HOW
+
+ANALYSIS APPROACH:
+1. Identify the main functionality changed
+2. Determine the appropriate scope from file paths
+3. Choose type based on change impact:
+   - feat: new functionality
+   - fix: bug corrections
+   - refactor: code restructuring without behavior change
+   - style: formatting, linting fixes
+   - test: adding/updating tests
+   - docs: documentation changes
+   - chore: tooling, dependencies, config
+   - perf: performance improvements
+
+Be specific and descriptive while staying concise."
+
+    local user_prompt="Repository: $repo_name
+Branch: $branch_name
+Files changed: $files_changed
+File types: $file_types
+Has tests: $has_tests
+Has config: $has_config
+Has docs: $has_docs
+
+Generate a conventional commit message for this change:
+
+$clean_diff"
 
     curl -s -X POST "https://api.openai.com/v1/chat/completions" \
         -H "Content-Type: application/json" \
         -H "Authorization: Bearer $OPENAI_API_KEY" \
         -d "$(jq -n \
-            --arg prompt "$prompt" \
+            --arg system "$system_prompt" \
+            --arg user "$user_prompt" \
+            --argjson temp "$temp" \
             '{
-                model: "gpt-4o",
+                model: "gpt-4o-mini",
                 messages: [
-                    {role: "system", content: "You are a git commit message generator. Follow conventional commits format. Be concise and descriptive."},
-                    {role: "user", content: $prompt}
+                    {role: "system", content: $system},
+                    {role: "user", content: $user}
                 ],
-                max_tokens: 80,
-                temperature: 0.3
+                max_tokens: 60,
+                temperature: $temp
             }')" | jq -r '.choices[0].message.content // empty'
 }
 
@@ -109,29 +160,99 @@ get_git_commits_clean() {
 # Generate PR title and description using OpenAI API from commits and diff
 generate_ai_pr_description() {
     local input="${1:-$(cat)}"
+    local linear_id="${2:-}"
 
     if [ -z "$OPENAI_API_KEY" ]; then
         echo "Error: OPENAI_API_KEY not set" >&2
         return 1
     fi
 
-    local clean_input=$(echo "$input" | sed 's/\x1b\[[0-9;]*m//g' | tr -d '\000-\031')
-    local prompt="Generate a semantic PR title and description.\n\nFormat:\n## Title\n[type(scope): short semantic title]\n\n## Summary\n[Brief description of what this PR accomplishes]\n\n## Changes\n- [Key changes made]\n\n## Testing\n- [How to test this]\n\nKeep title under 50 chars. Be professional and concise.\n\nContext:\n$clean_input"
+    # Obtener más contexto del repositorio
+    local repo_name=$(basename $(git rev-parse --show-toplevel 2>/dev/null) 2>/dev/null || echo "unknown")
+    local current_branch=$(git_current_branch 2>/dev/null || echo "unknown")
+    local clean_input=$(echo "$input" | sed 's/\x1b\[[0-9;]*m//g' | tr -d '\000-\031' | head -c 12000)
 
-    curl -s -X POST "https://api.openai.com/v1/chat/completions" \
+    # Extraer información específica
+    local files_changed=$(echo "$clean_input" | grep -c "^diff --git" || echo "0")
+    local additions=$(echo "$clean_input" | grep "^+" | wc -l | tr -d ' ')
+    local deletions=$(echo "$clean_input" | grep "^-" | wc -l | tr -d ' ')
+
+    # Preparar información de Linear si se proporciona
+    local linear_info=""
+    local linear_footer=""
+    if [ -n "$linear_id" ]; then
+        linear_info="Linear Issue: $linear_id"
+        linear_footer="
+
+Closes $linear_id"
+    fi
+
+    local system_prompt="You are a senior engineering manager reviewing code changes for PR descriptions.
+
+CRITICAL RULES:
+- NEVER invent or mention ticket IDs, Jira issues, or tracking numbers
+- NEVER add closes/fixes statements unless specifically provided
+- Focus only on the actual code changes shown
+- Be factual and specific about what the code does
+- Do not make assumptions about project management tools
+
+REQUIREMENTS:
+- Write professional, technical PR descriptions
+- Focus on business value and technical impact
+- Use present tense for descriptions
+- Be specific about what changed and why
+- Include testing considerations
+- Use conventional commit format for title
+- Title should be under 50 characters and descriptive
+
+STRUCTURE:
+## Title
+[type(scope): concise description under 50 chars]
+
+## Summary
+[2-3 sentences explaining what this PR accomplishes and why]
+
+## Changes
+- [Specific technical changes made]
+- [Focus on functionality, components affected]
+
+## Testing
+- [How to verify the changes work]
+- [Edge cases to consider]
+
+## Impact
+- [Who this affects (users, developers)]
+- [Any considerations for reviewers]"
+
+    local user_prompt="Repository: $repo_name
+Branch: $current_branch
+Files changed: $files_changed
+Lines added: $additions
+Lines deleted: $deletions
+$linear_info
+
+Analyze the following changes and create a comprehensive PR description:
+
+$clean_input"
+
+    local description=$(curl -s -X POST "https://api.openai.com/v1/chat/completions" \
         -H "Content-Type: application/json" \
         -H "Authorization: Bearer $OPENAI_API_KEY" \
         -d "$(jq -n \
-            --arg prompt "$prompt" \
+            --arg system "$system_prompt" \
+            --arg user "$user_prompt" \
             '{
                 model: "gpt-4o",
                 messages: [
-                    {role: "system", content: "You are a senior developer writing PR descriptions. Be concise, professional, and focus on what matters to reviewers."},
-                    {role: "user", content: $prompt}
+                    {role: "system", content: $system},
+                    {role: "user", content: $user}
                 ],
-                max_tokens: 300,
-                temperature: 0.3
-            }')" | jq -r '.choices[0].message.content // empty'
+                max_tokens: 500,
+                temperature: 0.6
+            }')" | jq -r '.choices[0].message.content // empty')
+
+    # Añadir Linear footer si se proporcionó
+    echo "$description$linear_footer"
 }
 
 # Create GitHub PR using GitHub API with title, body, and branch info
@@ -294,6 +415,18 @@ interactive_ai_pr() {
         return 1
     fi
 
+    # Preguntar por Linear ID opcional
+    echo -n "Linear Issue ID (optional, press Enter to skip): "
+    read -r linear_id
+
+    # Limpiar el input - solo permitir formato tipo ABC-123
+    if [ -n "$linear_id" ]; then
+        linear_id=$(echo "$linear_id" | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+        if ! echo "$linear_id" | grep -qE "^[A-Z]+-[0-9]+$"; then
+            echo "⚠️  Linear ID format should be like ABC-123, using it as-is: $linear_id"
+        fi
+    fi
+
     local commits=$(get_git_commits_clean "$target_branch")
     local diff=$(get_git_branch_diff "$target_branch")
 
@@ -305,7 +438,11 @@ interactive_ai_pr() {
     local input="Branch: $current_branch → $target_branch\n\nCommits:\n$commits\n\nDiff:\n$diff"
 
     echo "Generating PR description..."
-    local description=$(echo -e "$input" | generate_ai_pr_description)
+    if [ -n "$linear_id" ]; then
+        echo "📋 Including Linear issue: $linear_id"
+    fi
+
+    local description=$(echo -e "$input" | generate_ai_pr_description "" "$linear_id")
 
     if [ -z "$description" ]; then
         echo "Failed to generate PR description"
@@ -332,10 +469,23 @@ interactive_ai_pr() {
 show_ai_pr_description() {
     local current_branch=$(git_current_branch)
     local target_branch=$(get_default_target_branch)
+
+    # Preguntar por Linear ID opcional
+    echo -n "Linear Issue ID (optional, press Enter to skip): "
+    read -r linear_id
+
+    # Limpiar el input
+    if [ -n "$linear_id" ]; then
+        linear_id=$(echo "$linear_id" | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+        if ! echo "$linear_id" | grep -qE "^[A-Z]+-[0-9]+$"; then
+            echo "⚠️  Linear ID format should be like ABC-123, using it as-is: $linear_id"
+        fi
+    fi
+
     local commits=$(get_git_commits_clean "$target_branch")
     local diff=$(get_git_branch_diff "$target_branch")
     local input="Branch: $current_branch → $target_branch\n\nCommits:\n$commits\n\nDiff:\n$diff"
-    echo -e "$input" | generate_ai_pr_description
+    echo -e "$input" | generate_ai_pr_description "" "$linear_id"
 }
 
 # Git push current branch with upstream and optional PR opening
@@ -364,5 +514,164 @@ git_push_current() {
     else
         echo "Failed to push $current_branch"
         return 1
+    fi
+}
+
+# Enhanced AI Functions
+
+# Interactive workflow: generate multiple AI commit message options
+interactive_ai_commit_with_options() {
+    if ! git rev-parse --git-dir > /dev/null 2>&1; then
+        echo "Not in a git repository" >&2
+        return 1
+    fi
+
+    local diff=$(get_git_staged_diff)
+    if [ -z "$diff" ]; then
+        echo "No staged changes. Stage with: git add ."
+        return 1
+    fi
+
+    echo "Generating commit message options..."
+
+    # Generar 3 opciones con temperaturas distintas
+    local msg1=$(TEMP=0.3 echo "$diff" | generate_ai_commit_message)
+    local msg2=$(TEMP=0.7 echo "$diff" | generate_ai_commit_message)
+    local msg3=$(TEMP=0.9 echo "$diff" | generate_ai_commit_message)
+
+    echo "Choose a commit message:"
+    echo "1) $msg1"
+    echo "2) $msg2"
+    echo "3) $msg3"
+    echo "4) Enter custom message"
+    echo -n "Select option [1-4]: "
+
+    read -r choice
+    case $choice in
+        1) selected_msg="$msg1" ;;
+        2) selected_msg="$msg2" ;;
+        3) selected_msg="$msg3" ;;
+        4) echo -n "Enter commit message: "; read -r selected_msg ;;
+        *) echo "Invalid choice"; return 1 ;;
+    esac
+
+    if [ -n "$selected_msg" ]; then
+        analyze_commit_quality "$selected_msg"
+        echo -n "Use this message? [y/N] "
+        read -r response
+        if [[ "$response" =~ ^[Yy]$ ]]; then
+            git commit -m "$selected_msg"
+            echo "Committed successfully with: $selected_msg"
+        fi
+    fi
+}
+
+# Analyze commit message quality and provide score
+analyze_commit_quality() {
+    local message="$1"
+
+    local score=0
+    local feedback=""
+
+    # Verificar formato convencional
+    if echo "$message" | grep -qE "^(feat|fix|docs|style|refactor|test|chore|perf)(\(.+\))?: .+"; then
+        score=$((score + 30))
+        feedback="$feedback\n✅ Conventional commit format"
+    else
+        feedback="$feedback\n❌ No conventional commit format"
+    fi
+
+    # Verificar longitud
+    if [ ${#message} -le 50 ]; then
+        score=$((score + 20))
+        feedback="$feedback\n✅ Good length (${#message} chars)"
+    else
+        feedback="$feedback\n⚠️ Message too long (${#message} chars)"
+    fi
+
+    # Verificar scope
+    if echo "$message" | grep -q "(.*):"; then
+        score=$((score + 20))
+        feedback="$feedback\n✅ Has scope"
+    else
+        feedback="$feedback\n⚠️ Consider adding scope"
+    fi
+
+    # Verificar descripción
+    if echo "$message" | grep -qE ": [a-z]"; then
+        score=$((score + 15))
+        feedback="$feedback\n✅ Lowercase description"
+    fi
+
+    # Verificar que no termine en punto
+    if ! echo "$message" | grep -q "\.$"; then
+        score=$((score + 15))
+        feedback="$feedback\n✅ No period at end"
+    fi
+
+    echo "Quality Score: $score/100"
+    echo -e "$feedback"
+}
+
+# Show commit statistics for current branch vs target
+show_commit_stats() {
+    local target_branch="${1:-$(get_default_target_branch)}"
+    local current_branch=$(git_current_branch)
+
+    echo "Branch: $current_branch → $target_branch"
+    echo "=========================="
+
+    local commits=$(git rev-list --count "origin/$target_branch..$current_branch" 2>/dev/null || echo "0")
+    local files=$(git diff --name-only "origin/$target_branch..$current_branch" 2>/dev/null | wc -l | tr -d ' ')
+    local additions=$(git diff --shortstat "origin/$target_branch..$current_branch" 2>/dev/null | awk '{print $4}' || echo "0")
+    local deletions=$(git diff --shortstat "origin/$target_branch..$current_branch" 2>/dev/null | awk '{print $6}' || echo "0")
+
+    echo "Commits: $commits"
+    echo "Files changed: $files"
+    echo "Lines added: +$additions"
+    echo "Lines deleted: -$deletions"
+
+    # Mostrar tipos de archivos modificados
+    local file_types=$(git diff --name-only "origin/$target_branch..$current_branch" 2>/dev/null | sed 's/.*\.//' | sort | uniq -c | sort -rn | head -5)
+    if [ -n "$file_types" ]; then
+        echo ""
+        echo "File types modified:"
+        echo "$file_types"
+    fi
+}
+
+# Quick commit with AI assistance (stage all and commit)
+quick_ai_commit() {
+    if ! git rev-parse --git-dir > /dev/null 2>&1; then
+        echo "Not in a git repository" >&2
+        return 1
+    fi
+
+    # Stage all changes
+    git add .
+
+    local diff=$(get_git_staged_diff)
+    if [ -z "$diff" ]; then
+        echo "No changes to commit"
+        return 1
+    fi
+
+    echo "Staging all changes and generating commit message..."
+    local msg=$(echo "$diff" | generate_ai_commit_message)
+
+    if [ -z "$msg" ]; then
+        echo "Failed to generate commit message"
+        return 1
+    fi
+
+    analyze_commit_quality "$msg"
+    echo -n "Commit with: '$msg'? [y/N] "
+    read -r response
+
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        git commit -m "$msg"
+        echo "✅ Committed successfully!"
+    else
+        echo "Aborted."
     fi
 }

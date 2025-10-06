@@ -119,8 +119,11 @@ alias gprev='git checkout HEAD^'
 alias gai='interactive_ai_commit'
 alias gaim='show_ai_commit_message'
 alias gcai='git add -A && interactive_ai_commit'  # Add all and AI commit
+alias gcaio='interactive_ai_commit_with_options'  # Multiple AI options
+alias gcaiq='quick_ai_commit'                     # Quick AI commit
 alias gprai='interactive_ai_pr'
 alias gprad='show_ai_pr_description'
+alias gstats='show_commit_stats'                  # Branch statistics
 
 # FUNCTIONS -------------------------------------------------------------------
 
